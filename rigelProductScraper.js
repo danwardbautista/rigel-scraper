@@ -99,7 +99,8 @@ async function autoScroll(page) {
         allImages = allImages.concat(previewImgSrcs);
         allImages = Array.from(new Set(allImages));
 
-        let technicalSpecs = {};
+        // Modified technical specifications: compiling all tables into one string.
+        let technicalSpecs = "";
         const specTables = document.querySelectorAll('#specsList table.table');
         specTables.forEach(table => {
           const headerCell = table.querySelector('tr th');
@@ -118,7 +119,7 @@ async function autoScroll(page) {
               }
             }
             tableHTML += `</tbody></table>`;
-            technicalSpecs[tableName] = tableHTML;
+            technicalSpecs += tableHTML + `<br><br>`;
           }
         });
 
