@@ -14,7 +14,7 @@ const today = new Date().toISOString().split('T')[0];
   if (!fs.existsSync(productFolder)) fs.mkdirSync(productFolder);
 
   console.log("Scraping categories...");
-  
+
   await page.goto('https://www.rigelmedical.com/gb/products/', { waitUntil: 'networkidle2' });
 
   const categories = await page.evaluate(() => {
@@ -64,6 +64,10 @@ const today = new Date().toISOString().split('T')[0];
         });
     });
 
+    subcats.forEach(subcat => {
+      subcat.product_category_string = category.category_name;
+    });
+
     subcategories = subcategories.concat(subcats);
   }
 
@@ -78,7 +82,7 @@ const today = new Date().toISOString().split('T')[0];
 
     await page.goto(subcategory.subcategory_link, { waitUntil: 'networkidle2' });
 
-    const subProducts = await page.evaluate(() => {
+    let subProducts = await page.evaluate(() => {
       return Array.from(document.querySelectorAll('.row.padding-top-20 .col-12.col-sm-6.col-lg-4')).map(product => {
         const productName = product.querySelector('.productBoxName')?.innerText.trim();
         const productImage = product.querySelector('.product-box img')?.getAttribute('src');
@@ -93,6 +97,12 @@ const today = new Date().toISOString().split('T')[0];
         };
       });
     });
+
+    subProducts = subProducts.map(product => ({
+      ...product,
+      product_category_string: subcategory.product_category_string,
+      product_subcategory_string: subcategory.subcategory_name
+    }));
 
     subProducts.forEach(product => {
       console.log(`Found product: ${product.product_name} - ${product.product_link}`);

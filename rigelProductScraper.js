@@ -99,7 +99,6 @@ async function autoScroll(page) {
         allImages = allImages.concat(previewImgSrcs);
         allImages = Array.from(new Set(allImages));
 
-        // Modified technical specifications: compiling all tables into one string.
         let technicalSpecs = "";
         const specTables = document.querySelectorAll('#specsList table.table');
         specTables.forEach(table => {
@@ -133,6 +132,10 @@ async function autoScroll(page) {
           technical_specifications: technicalSpecs
         };
       });
+      
+      productDetails.product_category_string = product.product_category_string || null;
+      productDetails.product_subcategory_string = product.product_subcategory_string || null;
+      
       finalProducts.push(productDetails);
     } catch (error) {
       console.error(`Failed to scrape product: ${product.product_name} (${product.product_link})`);
